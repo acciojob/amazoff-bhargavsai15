@@ -41,7 +41,15 @@ public class OrderRepository {
         if(!orderDeliveryPair.containsKey(partnerId)){
             orderDeliveryPair.put(partnerId,new ArrayList<>());
         }
+
+        //If already order is present
+        for(String s:orderDeliveryPair.get(partnerId)){
+            if(s.equals(orderId)){
+               return;
+            }
+        }
         orderDeliveryPair.get(partnerId).add(orderId);
+
     }
 
     public Order getOrderById(String orderId){
@@ -74,7 +82,46 @@ public class OrderRepository {
     }
 
     public List<String> getAllOrders(){
-        return new ArrayList<>();
+        List<String> res=new ArrayList<>();
+        for(String id:orderDb.keySet()){
+            res.add(id);
+        }
+        return res;
+    }
+
+    public int getCountOfUnassignedOrders(){
+        for(String order:orderDb.keySet()){
+            if(!allOrders.contains(order)){
+                allOrders.add(order);
+            }
+        }
+        for(List<String> values:orderDeliveryPair.values()){
+            for(String ele:values){
+                if(allOrders.contains(ele)){
+                    allOrders.remove(ele);
+                }
+            }
+        }
+
+        return allOrders.size();
+    }
+
+    public void deleteOrderById(String orderId){
+        outer:
+        for(String partnerId:orderDeliveryPair.keySet()){
+            for(String orders:orderDeliveryPair.get(partnerId)){
+                if(orders.equals(orderId)) {
+                    orderDeliveryPair.get(partnerId).remove(orderId);
+                    deliveryDb.remove(partnerId);
+                    break outer;
+                }
+            }
+        }
+        orderDb.remove(orderId);
+    }
+
+    public void deletePartnerById(String partnerId){
+
     }
 
 }
