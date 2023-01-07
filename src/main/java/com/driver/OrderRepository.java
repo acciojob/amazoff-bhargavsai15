@@ -74,7 +74,7 @@ public class OrderRepository {
     }
 
     public List<String> getAllOrders(){
-
+        return new ArrayList<>();
     }
 
 }
